@@ -1,0 +1,39 @@
+---
+applications:
+  # -------- API (public route, but protected by a shared secret) --------
+  # On the trial the user lacks network.write scope, so app-to-app internal
+  # routing + network policies are not available. Instead the API keeps a
+  # public route and requires the x-internal-secret header (API_SHARED_SECRET)
+  # that only bff-web knows. User auth still happens at the BFF via XSUAA.
+  - name: bff-api
+    path: api
+    memory: 256M
+    disk_quota: 512M
+    buildpacks:
+      - nodejs_buildpack
+    health-check-type: http
+    health-check-http-endpoint: /health
+    services:
+      - bff-hana
+      - bff-logs
+    env:
+      HANA_TABLE: ITEMS
+      API_SHARED_SECRET: ((api_shared_secret))
+
+  # -------- Web monolith (App Router + BFF), public --------
+  - name: bff-web
+    path: web
+    memory: 384M
+    disk_quota: 512M
+    buildpacks:
+      - nodejs_buildpack
+    health-check-type: http
+    health-check-http-endpoint: /health
+    services:
+      - bff-xsuaa
+      - bff-logs
+    env:
+      # The BFF calls the API over its public route, authenticated with the
+      # shared secret. Set at deploy time (see deploy step).
+      API_URL: ((api_url))
+      API_SHARED_SECRET: ((api_shared_secret))

@@ -1,0 +1,21 @@
+{
+  "name": "sap-btp-bff-web",
+  "version": "1.0.0",
+  "description": "Web monolith: App Router + static frontend + BFF, secured with XSUAA",
+  "private": true,
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "start:bff": "node src/bffServer.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@sap/approuter": "^16.7.1",
+    "@sap/xssec": "^4.2.8",
+    "express": "^4.19.2",
+    "passport": "^0.7.0"
+  }
+}

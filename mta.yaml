@@ -1,0 +1,66 @@
+_schema-version: "3.2"
+ID: sap-btp-bff
+version: 1.0.0
+description: Minimal BFF on SAP BTP - web (App Router + BFF) + internal API + HANA
+
+# Optional alternative to manifest.yml + deploy.sh, for those using the
+# Cloud MTA Build Tool (mbt) and the multiapps cf plugin:
+#   mbt build && cf deploy mta_archives/sap-btp-bff_1.0.0.mtar
+# The manifest.yml + deploy.sh path is simpler and is the primary one.
+
+parameters:
+  enable-parallel-deployments: true
+
+modules:
+  # -------- Internal API (internal route only, no public access) --------
+  - name: bff-api
+    type: nodejs
+    path: api
+    parameters:
+      memory: 256M
+      disk-quota: 512M
+      routes:
+        - route: bff-api.internal
+    properties:
+      HANA_TABLE: ITEMS
+    requires:
+      - name: bff-hana
+      - name: bff-logs
+
+  # -------- Web monolith (App Router + BFF), public --------
+  - name: bff-web
+    type: nodejs
+    path: web
+    parameters:
+      memory: 384M
+      disk-quota: 512M
+    properties:
+      API_URL: http://bff-api.internal:8080
+      destinations: >
+        [{"name":"bff","url":"http://bff-api.internal:8080","forwardAuthToken":true}]
+    requires:
+      - name: bff-xsuaa
+      - name: bff-logs
+
+resources:
+  # HANA Cloud HDI container (trial: hdi-shared backed by hana-free).
+  - name: bff-hana
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+
+  # XSUAA (Authorization & Trust Management) with the security descriptor.
+  - name: bff-xsuaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+
+  # Application Logging (native SAP logging - binding only, no code).
+  - name: bff-logs
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: application-logs
+      service-plan: lite

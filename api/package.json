@@ -1,0 +1,18 @@
+{
+  "name": "sap-btp-bff-api",
+  "version": "1.0.0",
+  "description": "Internal API service - reads/writes items to SAP HANA Cloud",
+  "private": true,
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@sap/hana-client": "^2.20.20",
+    "express": "^4.19.2"
+  }
+}

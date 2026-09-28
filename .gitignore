@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ---- Node.js (this project) ----
+node_modules/
+npm-debug.log*
+yarn-error.log*
+*.log
+
+# Local env / service keys (never commit HANA credentials)
+.env
+*.local
+default-env.json

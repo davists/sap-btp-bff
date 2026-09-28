@@ -1,0 +1,28 @@
+{
+  "xsappname": "sap-btp-bff",
+  "tenant-mode": "dedicated",
+  "description": "Security descriptor for the BFF (App Router + BFF).",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Read",
+      "description": "Read and write items through the BFF"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Viewer",
+      "description": "Can use the application (read and write items)",
+      "scope-references": ["$XSAPPNAME.Read"]
+    }
+  ],
+  "role-collections": [
+    {
+      "name": "BFFViewer",
+      "description": "Role collection granting access to the BFF app",
+      "role-template-references": ["$XSAPPNAME.Viewer"]
+    }
+  ],
+  "oauth2-configuration": {
+    "redirect-uris": ["https://*.hana.ondemand.com/**"]
+  }
+}

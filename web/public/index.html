@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SAP BTP BFF - Itens no HANA</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Itens no HANA</h1>
+      <p class="subtitle">
+        Envie qualquer dado. Ele passa pelo BFF (autenticado) e é gravado no HANA Cloud.
+      </p>
+
+      <section class="card">
+        <h2>Gravar dado</h2>
+        <form id="item-form">
+          <label for="payload">Dado (texto ou JSON)</label>
+          <textarea
+            id="payload"
+            name="payload"
+            rows="5"
+            placeholder='Ex.: um texto qualquer, ou {"nome":"Ana","idade":30}'
+            required
+          ></textarea>
+          <button type="submit" id="submit-btn">Salvar</button>
+        </form>
+        <p id="form-message" class="message" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="card">
+        <div class="list-header">
+          <h2>Dados gravados</h2>
+          <button type="button" id="refresh-btn" class="secondary">Atualizar</button>
+        </div>
+        <p id="list-message" class="message" role="status" aria-live="polite"></p>
+        <ul id="items" class="items"></ul>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
