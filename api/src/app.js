@@ -27,6 +27,15 @@ function createApp(repository) {
     return res.status(401).json({ error: 'unauthorized' });
   });
 
+  // Readiness guard: if the repository is still initializing (e.g. HANA is
+  // starting up on the trial), return 503 instead of erroring.
+  app.use('/items', (_req, res, next) => {
+    if (typeof repository.isReady === 'function' && !repository.isReady()) {
+      return res.status(503).json({ error: 'database not ready, try again shortly' });
+    }
+    next();
+  });
+
   // List all items (most recent first)
   app.get('/items', async (_req, res) => {
     try {

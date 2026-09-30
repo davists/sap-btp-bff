@@ -13,6 +13,10 @@ function createMemoryRepository() {
   let nextId = 1;
 
   return {
+    isReady() {
+      return true;
+    },
+
     async init() {
       // no-op: nothing to create for in-memory storage
     },

@@ -23,6 +23,7 @@ function createHanaRepository(credentials, tableName = 'ITEMS') {
   const table = schema ? `"${schema}"."${tableName}"` : `"${tableName}"`;
 
   const conn = hana.createConnection();
+  let ready = false;
 
   function connect() {
     return new Promise((resolve, reject) => {
@@ -54,6 +55,10 @@ function createHanaRepository(credentials, tableName = 'ITEMS') {
   }
 
   return {
+    isReady() {
+      return ready;
+    },
+
     async init() {
       await connect();
       // CREATE TABLE IF NOT EXISTS is not supported by HANA, so we
@@ -71,6 +76,7 @@ function createHanaRepository(credentials, tableName = 'ITEMS') {
           throw err;
         }
       }
+      ready = true;
     },
 
     async insert(payload) {
