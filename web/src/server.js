@@ -20,19 +20,17 @@ function main() {
   // 1) Start the internal BFF.
   startBff();
 
-  // 2) Point the App Router's "bff" destination at the local BFF.
-  //    On CF, destinations normally come from the `destinations` env var,
-  //    but for a same-process forward we set it explicitly here so the
-  //    monolith is self-contained.
-  if (!process.env.destinations) {
-    process.env.destinations = JSON.stringify([
-      {
-        name: 'bff',
-        url: `http://127.0.0.1:${config.bffPort}`,
-        forwardAuthToken: true,
-      },
-    ]);
-  }
+  // 2) Point the App Router's "bff" destination at the local in-process BFF.
+  //    We ALWAYS overwrite `destinations` here: a stale value left over from
+  //    a previous deploy (cf push does not remove old env vars) would
+  //    otherwise make the App Router forward to a dead host and return 502.
+  process.env.destinations = JSON.stringify([
+    {
+      name: 'bff',
+      url: `http://127.0.0.1:${config.bffPort}`,
+      forwardAuthToken: true,
+    },
+  ]);
 
   // 3) Start the App Router (listens on PORT).
   const ar = approuter();
